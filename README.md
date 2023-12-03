@@ -1,94 +1,68 @@
-# Diabetes Prediction Using Logistic Regression
+# Line Follower Robot
 
-This repository contains the code and resources for predicting diabetes using a Logistic Regression model. The project is implemented in Python, utilizing libraries such as pandas, scikit-learn, and Flask for web deployment.
+**SOURCE CODE FOR ARDUINO**</br>
+* motors.ino (Hardware Challenge #2 - Make a Robot Drive in a Controlled Way)
+* p_controller.ino (Hardware Challenge #3 - P-Controller for a Line-Follower Robot)
 
-## Table of Contents
-1. [Project Overview](#project-overview)
-2. [Dataset](#dataset)
-3. [Model Training](#model-training)
-4. [Web Application](#web-application)
-5. [Setup and Installation](#setup-and-installation)
-6. [Usage](#usage)
-7. [Results](#results)
-8. [Contributing](#contributing)
+**Hardware Challenge #0 of AI for Robotics**</br>
+Acquire Some Hardware and Describe It
 
-## Project Overview
+I bought all the electronic parts necessary to build a line-follower robot:
+* 1 transparent chassis of plastic
+* 4 motors
+* 4 wheels
+* L298N motor driver board 
+* ARDUINO UNO
+* 5 TCRT5000 infrared tubs
+* 5 LEDs
+* 5 resistors
+* 1 mini protoboard
+* 2 battery boxes
+* 3 batteries
+* 1 USB cable for Arduino
+* Cables, screws and bolts
 
-The goal of this project is to create a predictive model that can classify whether a person has diabetes based on various medical parameters. The Logistic Regression algorithm is used due to its effectiveness in binary classification problems.
+![Hardware Challenge 0](images/hardware-challenge-0.jpg)
 
-## Dataset
+**Hardware Challenge #1 of AI for Robotics**</br>
+Sense the Environment in Some Way
 
-The dataset used for this project is located in the `Dataset` folder. It includes several features such as:
-- Pregnancies
-- Glucose
-- BloodPressure
-- SkinThickness
-- Insulin
-- BMI
-- DiabetesPedigreeFunction
-- Age
-- Outcome (target variable)
+By using 5 TCRT5000 infrared tubs, I sense the presence of black lines and white floor below the line-follower robot. Each TCRT5000 module has its own electronic circuit, for a total of 5 TCRT5000 e-circuits. Each TCRT5000 e-circuit has a resistor, a LED, a TCRT5000 module, and 3 cable connections: Ground, +5V, and the signal sent to the LED and to the analog inputs of Arduino. The TCRT5000 signal has input voltages between 0 and 5 volts and is mapped into integer values between 0 and 1023, by using the Arduino function analogRead(). In practice, a black line is transduced into an integer value of 400 and white floor is transduced into an integer value of 20, approximately. The sensitivity of each TCRT5000 module can be adjusted by using a small screwdriver to tune the regulator. These integer values of transduction reflect the proportional voltages shown in the LEDs. So, a black line turns the LEDs on and the white floor turns the LEDs off, as shown in the video. The 5 TCRT5000 e-circuits are only the perceptual part of the line-follower robot. In the Hardware Challenge #3, I will explain how these integer values of transduction will be used to produce intelligent behavior, to make the robot follow the black line.
 
-## Model Training
+Video Demonstration:
+![Hardware Challenge 1](images/hardware-challenge-1.png)
+https://youtu.be/YxFP9dMudcE
 
-The `Notebooks` folder contains Jupyter notebooks used for data exploration, preprocessing, and model training. Key steps include:
-1. Data Cleaning
-2. Exploratory Data Analysis (EDA)
-3. Feature Scaling
-4. Model Training and Evaluation
+**Hardware Challenge #2 of AI for Robotics**</br>
+Make a Robot Drive in a Controlled Way
 
-The trained model is saved in the `Model` folder.
+In this project, I ensure that all the connections and pins of the "L298N dual H-bridge DC motor driver board" are correctly configured and programmed from the Arduino board. So that, the robot can move forwards, move backwards, turn in both directions, brake, and modulate its speed at will, as shown in the video. 
 
-## Web Application
+If you read the L298N dual H-bridge DC motor driver board manual, you will find a brief explanation of how the L298N module works. The pins ENA and ENB can be controlled via the PWM pins of Arduino to regulate the speed of motor A and motor B, respectively. Motor A goes forwards when Arduino sets IN1 to 5V and IN2 to GND. And it goes backwards when Arduino sets IN1 to GND and IN2 to 5V. Motor B goes forwards when Arduino sets IN3 to 5V and IN4 to GND. And it goes backwards when Arduino sets IN3 to GND and IN4 to 5V. However, motor A and motor B are placed in opposite directions. So, their logic must be also inverted. The robot stops when IN1, IN2, IN3, and IN4 are set to 5V.
 
-The project includes a Flask web application to allow users to input medical parameters and receive diabetes predictions. The app's files are:
-- `app.py`: Main application file
-- `templates/index.html`: HTML template for the web interface
+Moreover, motor A and motor B are double motors. We have 4 motors instead of 2 motors. And the L298N module only has 2 motor controllers. So, each pair of motors must be electrically correlated in the correct way. And the correct way means the cables must be connected in an inverted and parallel way because the motors in each side of the robot are placed in opposite directions. Such electrical correlation produces a curious phenomenon. Each pair of motors in each side gets electrically and mechanically correlated. If 12V are fed into 1 pair of motors, both motors move in the same direction. That's expected. And if you move 1 motor with your hand, the solenoid generates electricity like a dynamo (electricity generator), moving the other electrically correlated motor in the same direction but in a slower way. That's the curious part.
 
-## Setup and Installation
+Now that the electronic parts were bought (Hardware Challenge #0), the sensors can transduce the world (Hardware Challenge #1), and the motors produce coherent movements controlled by Arduino commands (Hardware Challenge #2), the design and implementation of the line-follower robot can be explained (Hardware Challenge #3).
 
-To run the project locally, follow these steps:
+Video Demonstration:
+![Hardware Challenge 2](images/hardware-challenge-2.png)
+https://youtu.be/lya-ddb5DFg
 
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/gaurav-bhadane/Diabetes_Predicton.git
-    cd Diabetes_Predicton
-    ```
+**Hardware Challenge #3 of AI for Robotics**</br>
+P-Controller for a Line-Follower Robot
 
-2. Create a virtual environment and activate it:
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
+The previous Hardware Challenges explained the electronic parts bought (Hardware Challenge #0), how the robot sees the black line and the white floor (Hardware Challenge #1), and how the robot moves in a coherent way according to Arduino commands (Hardware Challenge #2). These are the prerequisites to explain how to build a P-controller for a line-follower robot.
 
-3. Install the required packages:
-    ```bash
-    pip install -r requirements.txt
-    ```
+Basically, the integer values of transduction are simplified even further by classifying them into 2 bins: 0 (low values) and 1 (high values). There are 5 TCRT5000 modules. Each TCRT5000 module has an associated semantics, the variable line. Line adds -4, -2, 0, 2, and 4 if the corresponding TCRT5000 modules are active. Then line is divided by the number of active TCRT5000 modules because many TCRT5000 modules can be active at once. For example, 1 or 2 TCRT5000 modules can be active at once. So, the resulting line value is in the range [-4, 4], only integer values are allowed. If the line value is 0, it means the robot is on track without deviation. Higher absolute values of line means the robot is deviated and motors must turn the robot in PROPORTION to the variable line.
 
-4. Run the Flask application:
-    ```bash
-    python app.py
-    ```
+The Arduino loop has 2 modes of operation:
 
-## Usage
+Mode 1: When 1 or 2 TCRT5000 modules are active at once, it means the robot is not so deviated can correct its course by making small PROPORTIONAL adjustments to its position by slowing down one motor at the corresponding side. The command digitalWrite(LED_BUILTIN, HIGH) is executed to visualize this mode.
 
-1. Open your web browser and go to `http://127.0.0.1:5000/`.
-2. Input the required medical parameters in the form.
-3. Click "Predict" to see if the individual is likely to have diabetes.
+Mode 2: When no TCRT5000 modules or all TCRT5000 modules are active, it means the robot is seeing background without line. So, the robot must turn around its own position to the last seen value of the variable line and make no further advancements. That is, the robot must turn its wheels by activating the pairs of motors in opposite directions. The command digitalWrite(LED_BUILTIN, LOW) is executed to visualize this mode.
 
-## Results
+The integral part and the derivative part of the PID controller were not required for this project. The integral part was not required because this robot has no drift. The derivative part was not required because the robot shows no oscillations in its movements. Proportional adjustments are small enough to avoid oscillations and frequent enough to keep the robot on track.
 
-The model's performance metrics, such as accuracy, precision, recall, and F1-score, are detailed in the Jupyter notebooks. These metrics help evaluate the effectiveness of the Logistic Regression model in predicting diabetes.
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Commit your changes (`git commit -am 'Add new feature'`).
-4. Push to the branch (`git push origin feature-branch`).
-5. Create a new Pull Request.
-
-
-Feel free to explore the repository and provide feedback or raise issues if you encounter any problems. Happy coding!
+Video Demonstration:
+![Hardware Challenge 3](images/hardware-challenge-3.png)
+https://youtu.be/DaOiyH9NtPE
