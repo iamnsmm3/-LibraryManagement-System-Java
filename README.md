@@ -58,4 +58,4 @@ This library management system provides a user-friendly interface for librarians
 
 ## Contributors
 
-- [Makechi Eric](https://github.com/gnanyadapa)
+- [Gnaneshwar Adapa](https://github.com/gnanyadapa)
