@@ -58,4 +58,4 @@ This library management system provides a user-friendly interface for librarians
 
 ## Contributors
 
-- [Gnaneshwar Adapa](https://github.com/gnanyadapa)
+- [Shivamani Naredla](https://github.com/iamnsmm3)
