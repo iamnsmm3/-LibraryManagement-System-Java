@@ -1,6 +1,6 @@
 # Library Management System
 
-This is a Java Swing-based library management system that utilizes MySQL for the database management.
+This is a Java Swing-based library management system that utilizes MySQL for the database management. 
 
 ## Overview
 
